@@ -1,0 +1,4 @@
+node_modules/
+.forge/
+npm-debug.log*
+.DS_Store

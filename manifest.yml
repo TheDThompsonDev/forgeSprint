@@ -1,0 +1,55 @@
+# PLACEHOLDER app id. This is not a registered Forge app.
+# The nil-style UUID below exists only so `forge lint` can parse the ARI.
+# It was not issued by `forge create` or `forge register`.
+# `forge developer-spaces list` returned no spaces, and non-interactive
+# registration would accept Forge terms and billing consent.
+# Run `forge register` from this directory after creating a Developer Space.
+# See README.md. Register replaces this id.
+modules:
+  trigger:
+    - key: sprint-closed
+      function: sprint-closed-fn
+      events:
+        - avi:jira-software:closed:sprint
+      filter:
+        ignoreSelf: true
+  consumer:
+    - key: review-consumer
+      queue: review-queue
+      function: review-consumer-fn
+  jira:projectPage:
+    - key: sprint-review-page
+      resource: project-page
+      resolver:
+        function: ui-resolver
+      render: native
+      title: Sprint reviews
+  jira:projectSettingsPage:
+    - key: sprint-review-settings
+      resource: settings-page
+      resolver:
+        function: ui-resolver
+      render: native
+      title: Sprint review settings
+  function:
+    - key: sprint-closed-fn
+      handler: index.onSprintClosed
+    - key: review-consumer-fn
+      handler: index.consumeReview
+      timeoutSeconds: 900
+    - key: ui-resolver
+      handler: index.uiHandler
+resources:
+  - key: project-page
+    path: src/frontend/project-page.jsx
+  - key: settings-page
+    path: src/frontend/settings-page.jsx
+permissions:
+  scopes:
+    - read:jira-work
+    - read:sprint:jira-software
+    - storage:app
+app:
+  runtime:
+    name: nodejs24.x
+  id: ari:cloud:ecosystem::app/00000000-0000-4000-8000-000000000000
